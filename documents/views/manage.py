@@ -4,6 +4,7 @@ from daisyproducer.documents.forms import PartialDocumentForm, PartialVersionFor
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 @login_required
 def index(request):
@@ -11,7 +12,22 @@ def index(request):
     the user has and group them by action
     """
     document_list = Document.objects.all().order_by('state','title')
+    paginator = Paginator(document_list, 25) # Show 25 contacts per page
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        documents = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        documents = paginator.page(paginator.num_pages)
+
     return render_to_response('documents/manage_index.html', locals())
+
     
 @login_required
 def detail(request, document_id):

@@ -16,7 +16,7 @@
   </thead>
 
   <tbody>
-    {% for document in document_list %}
+    {% for document in documents.object_list %}
     <tr class="{% cycle 'even' 'odd' %}">
       <td><a href="{% url manage_detail document.id %}">{{ document.title }}</a></td>
       <td>{{ document.author }}</td>
@@ -26,6 +26,22 @@
     {% endfor %}
   </tbody>
 </table>
+
+<div class="pagination">
+  <span class="step-links">
+    {% if documents.has_previous %}
+    <a href="?page={{ documents.previous_page_number }}">previous</a>
+    {% endif %}
+    
+    <span class="current">
+      Page {{ documents.number }} of {{ documents.paginator.num_pages }}.
+    </span>
+    
+    {% if documents.has_next %}
+    <a href="?page={{ documents.next_page_number }}">next</a>
+    {% endif %}
+  </span>
+</div>
 {% else %}
 <p>No documents are available.</p>
 {% endif %}
