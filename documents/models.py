@@ -52,7 +52,7 @@ class Document(models.Model):
         default=settings.DAISY_DEFAULT_PUBLISHER,
         help_text="The agency responsible for making the DTB available")
     date = models.DateField(
-        auto_now_add=True,
+        default=datetime.datetime.now,
         help_text="Date of publication of the DTB")
     identifier = models.CharField(
         max_length=255, 
@@ -93,8 +93,8 @@ class Document(models.Model):
 
     state = models.ForeignKey(State)
     assigned_to = models.ForeignKey(User, null=True, blank=True)
-    created_at = models.DateTimeField("Created", auto_now_add=True)
-    modified_at = models.DateTimeField("Last Modified", auto_now=True)
+    created_at = models.DateTimeField("Created", default=datetime.datetime.now)
+    modified_at = models.DateTimeField("Last Modified")
 
     def __unicode__(self):
         return self.title
@@ -113,6 +113,8 @@ class Document(models.Model):
             self.state = State.objects.filter(name='new')[0]
         if not self.identifier:
             self.identifier = "ch-sbs-%s" % str(uuid.uuid4())
+        # update modification flag
+        self.modified_at = datetime.datetime.now()
         super(Document, self).save()
 
 def get_version_path(instance, filename):
@@ -122,7 +124,7 @@ class Version(models.Model):
     comment = models.CharField(max_length=255)
     document = models.ForeignKey(Document)
     content = models.FileField(upload_to=get_version_path)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         get_latest_by = "created_at"
@@ -144,7 +146,7 @@ class Attachment(models.Model):
     mime_type = models.CharField(max_length=32, choices=MIME_TYPE_CHOICES)
     document = models.ForeignKey(Document)
     content = models.FileField(upload_to=get_attachment_path)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         ordering = ['-created_at']
