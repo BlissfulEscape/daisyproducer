@@ -41,6 +41,11 @@ urlpatterns += patterns('daisyproducer.documents.views.todo',
     url(r'^todo/(?P<document_id>\d+)/preview_pdf$', 'preview_pdf', name='todo_pdf'),
 )
 
+# work on pending documents
+urlpatterns += patterns('daisyproducer.documents.views.prep',
+    url(r'^prep/(?P<document_id>\d+)/markup_accents$', 'markup_accents', name='prep_markup_accents'),
+)
+
 # management of documents and meta data
 urlpatterns += patterns('daisyproducer.documents.views.manage',
     url(r'^manage/$', 'index', name='manage_index'),

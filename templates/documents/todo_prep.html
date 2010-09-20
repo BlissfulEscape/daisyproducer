@@ -1,0 +1,35 @@
+{% extends "documents/todo.html" %}
+{% load i18n %}
+{% load verbose_name %}
+
+{% block title %}{{ block.super }} - {% trans "Markup accents" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Markup accents" %}</h2>
+{% if accented_words %}
+<form method="post" action="">
+    {{ formset.management_form }}
+    <table>
+      {% for form in formset.forms %}
+        {% if forloop.first %}
+        <tr>
+	  {% for field in form %}
+          <th>{{ field.label }}</th>
+	  {% endfor %}
+        </tr>
+    	{% endif %}
+        <tr>
+	  {% for field in form %}
+	  <td>
+	    {{ field }}
+	  </td>
+	  {% endfor %}
+	</tr>
+      {% endfor %}
+    </table>
+  <p><input type="submit" value="{% trans 'Markup accents' %}" /></p>
+</form>
+{% else %}
+<p class="nodata">{% trans "No data to display" %}</p>
+{% endif %}
+{% endblock %}
